@@ -51,9 +51,9 @@ import matplotlib.pyplot as plt
 import scipy.optimize
 
 
-## I/O
+## Input data
 
-data = np.load("zenodo/fig7.npy", allow_pickle=True).item(0)
+data = np.load("fig7.npy", allow_pickle=True).item(0)
 
 
 ## Helpers
@@ -125,7 +125,7 @@ cbar.set_label(r"$I(\ell_x,\ell_y)$")
 
 # (c): Quasi-1D information per scale of the localized Anderson model ground state with disorder strength `W=10`
 ax = ax3
-ax.text(0.02, 0.98, r"(c)", transform=ax.transAxes, va="top")
+ax.text(0.88, 0.98, r"(c)", transform=ax.transAxes, va="top")
 quasi1d_x_data, fit_x = produce_data_and_exponential_fit(data, "localized_w40", axis=0)
 quasi1d_y_data, fit_y = produce_data_and_exponential_fit(data, "localized_w40", axis=1)
 ax.semilogy(np.arange(1, 41), quasi1d_x_data, "-", lw=1.5, markersize=3, label=r"$I(\ell_x)$")
@@ -154,7 +154,7 @@ ax.set_ylabel(r"$I(\ell_i)$")
 
 # (d): Quasi-1D information per scale (normalized) for the critical Anderson model for different system sizes
 ax = ax4
-ax.text(0.02, 0.98, r"(d)", transform=ax.transAxes, va="top")
+ax.text(0.88, 0.98, r"(d)", transform=ax.transAxes, va="top")
 for size in [10, 20, 30, 40]:
     quasi1d_normalized = (
         data[f"critical_w{size}"]["i_local"].sum(axis=(1, 2, 3)) / data[f"critical_w{size}"]["i_local"].shape[0] ** 2
@@ -168,5 +168,5 @@ ax.set_xlim([0.5, 40])
 ax.set_ylim([3e-5, 1])
 ax.yaxis.tick_right()
 
-
+plt.savefig("fig7.pdf", bbox_inches="tight")
 plt.show()
