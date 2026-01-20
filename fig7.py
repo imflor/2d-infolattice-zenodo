@@ -62,7 +62,7 @@ def f_linear(x, a, b):
     return a * x + b
 
 
-def produce_data_and_exponential_fit(data, name, axis=0, *, fit_range=(1, 38)):
+def produce_data_and_exponential_fit(data, name, axis=0, fit_range=(1, 38)):
     """Produce quasi-1D information per scale along the given axis and return the data and exponential fit."""
     begin, end = fit_range
     quasi1d_data = data[name]["i_local"].sum(axis=(1 - axis, 2, 3))
@@ -72,10 +72,10 @@ def produce_data_and_exponential_fit(data, name, axis=0, *, fit_range=(1, 38)):
     return quasi1d_data, exponential_fit
 
 
-def produce_power_law_fit(data, name, axis=0, *, fit_range=(2, 14)):
+def produce_power_law_fit(arr, name, axis=0, fit_range=(2, 14)):
     """Produce normalized quasi-1D information per scale along the given axis and return the power law fit -2."""
     begin, end = fit_range
-    quasi1d_data = data[name]["i_local"].sum(axis=(1 - axis, 2, 3)) / data[name]["i_local"].shape[0] ** 2
+    quasi1d_data = arr[name]["i_local"].sum(axis=(1 - axis, 2, 3)) / arr[name]["i_local"].shape[0] ** 2
     x_fit = np.log(np.arange(begin, end))
     y_fit = np.log(quasi1d_data)[begin:end]
     f = lambda x, b: -2 * x + b
@@ -118,7 +118,7 @@ ax2.set_title(r"Critical $(W=0)$")
 
 
 # Colorbar for (a,b)
-cbar = fig.colorbar(im1, ax=[ax1, ax2], orientation="vertical", pad=0.02, fraction=0.06)
+cbar = fig.colorbar(im1, ax=[ax1, ax2], orientation="vertical", pad=0, fraction=0.025)
 cbar.set_ticks([-1, 0, 1])
 cbar.set_label(r"$I(\ell_x,\ell_y)$")
 
