@@ -1,24 +1,24 @@
 ## Reproduction code and data (Zenodo archive)
 
 This repository contains:
-- `figures/`: scripts (`.py`), datasets (`.npy`) to reproduce the figures (`.pdf`) in the paper.
-- `demo/`: a minimal demo which generates the information lattice for a given many-body state (separate from figure reproduction).
-- `utils/plotting.py`: shared plotting utilities used by both.
+
+* `figures/`: scripts (`.py`) and datasets (`.npy`) to reproduce the paper figures (saved as `.pdf` by the scripts).
+* `demo/`: a minimal demo generating the information lattice for a given many-body state (separate from figure reproduction).
+* `utils/plotting.py`: shared plotting utilities used by both.
 
 ## Setup
 
-The code can be run using standard Python libraries.
-Requires `Python >= 3.9`. Scripts should be run from the root folder. Example:
+Requires Python >= 3.9.
+
+All scripts assume the working directory is the repository root. Example:
+
 ```bash
 python figures/fig07.py
 ```
 
-For successful imports and dependencies it is necessary to run
-```bash
-python -m pip install -e .
-```
+### Install dependencies (recommended)
 
-Optionally create a virtual environment with
+Create and activate a virtual environment (or use an existing environment such as Conda), then install this repository:
 
 ```bash
 python -m venv .venv
@@ -30,6 +30,25 @@ python -m venv .venv
 .venv\Scripts\Activate.ps1
 
 python -m pip install --upgrade pip
+python -m pip install -e .
 ```
 
-or run in an existing environment (e.g., Conda). 
+`python -m pip install -e .` installs the required dependencies and makes the shared `utils/` module importable.
+
+## Running the code
+
+### Reproduce figures
+
+Run any figure script from the repository root, for example:
+
+```bash
+python figures/fig07.py
+```
+
+### Run the minimal demo
+
+Run the demo script from the repository root, for example:
+
+```bash
+python demo/main.py
+```
