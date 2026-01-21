@@ -51,44 +51,43 @@ Bulk-vs-edge quasi-1D decomposition at distance ζ from the boundary:
 import numpy as np
 import matplotlib.pyplot as plt
 
+## Input data
 
-scale = np.arange(1, np.max(Nys)+1)
-i_scales = np.zeros([np.max(Nys), len(Nys)])
-marg = lambda Ny: Ny // 4
+data = np.load("fig10.npy", allow_pickle=True).item(0)
+sizes = data["sizes"]  # vertical system sizes
 
-for i, Ny in enumerate(Nys):
-    margin = marg(Ny)
-    i_loc = i_locs[i]
-    penetration_depth = lat.nx - 1
-    penetration_depth = 3
+## Helpers
 
-    for ly in range(Ny-2*margin):
-        #for lx in range(penetration_depth):
-        for lx in range(penetration_depth):
-            # i_scales[ly, i] += np.mean(lat.i_loc[lx, ly, :penetration_depth-lx, margin:lat.ny-ly-margin].sum(axis=0))
-                    # + np.mean(lat.i_loc[lx, ly, lat.nx-lx-1:lat.nx-lx, margin:lat.ny - ly - margin].sum(axis=0))
-            i_scales[ly, i] += np.mean(i_loc[lx, ly, :penetration_depth-lx, margin:Ny-ly-margin].sum(axis=0)) \
-                    # TOP EDGE CONTRIBUTION (Discarded): + np.mean(i_loc[lx, ly, :, margin:Ny - ly - margin][::-1, :][:penetration_depth-lx, :].sum(axis=0))
+def average_information_per_scale_along_edge():
+    """Returns the average quasi-1D local information along the edge in the y direction (left edge).
+    Done along the middle portion of the edge of length `size // 2`, at a distance `dist` from the edge.
+    """
+    scale = np.arange(np.max(sizes))
+    i_scales = np.zeros([np.max(sizes), len(sizes)])
+    for i, size in enumerate(sizes):
+        dist = size // 4
+        for ly in range(size - 2 * dist):
+            for lx in range(3):
+                i_scales[ly, i] += np.mean(
+                    data["system_%d" % size]["i_local"][lx, ly, :3 - lx, dist:size - ly - dist].sum(axis=0))
+    return scale, i_scales
 
-col = '#4d5c80'
-fig = plt.figure(figsize=(4, 3))
+## Figure
+
+scale, i_scales = average_information_per_scale_along_edge()
+
+fig = plt.figure(figsize=(3, 2), constrained_layout=True)
 ax = fig.add_subplot(111)
-xs = [Ny-2*marg(Ny)-2 for Ny in Nys]
-xs = [15, 19, 24, 30, 38]
-ys = [0.29/2] * 5
-plt.text(xs[0]-3.5, ys[0], r'$N_x\!=$', fontsize=16, c=col, ha='right', va='center')
-for i, Ny in enumerate(Nys):
-    plt.plot((i_scales[:, i]*(scale-1)**2)[:Ny-2*marg(Ny)], '-', lw=1.5, markersize=0, c=col, alpha=(i+1)/(len(Nys)+2))
-    plt.text(xs[i], ys[i], r'$%d$' % Ny, fontsize=16, c=col, alpha=(i+2)/(len(Nys)+2), ha='right', va='center')
-plt.axhline(1 / (12 * np.log(2)), c='r', label=r'$1/12\ln 2$', dashes=(5, 0), lw=1.5)
-plt.ylabel(r'$i^{\ell_x}|_{\mathcal{C}_\mathrm{edge}}\cdot\ell_x^{2}$', rotation=90, fontsize=19)
+for i, size in enumerate(sizes):
+    dist = size // 4
+    plt.plot(scale[:size-2*dist], (i_scales[:, i] * scale**2)[:size-2*dist], lw=1.5)
+plt.axhline(1 / (12 * np.log(2)), c='k', label=r'$1/12\ln 2$', dashes=(5, 2), lw=1.5)
+plt.ylabel(r'$i^{\ell_x}|_{\mathcal{C}_\mathrm{edge}}\cdot\ell_x^{2}$')
 ax.yaxis.set_label_coords(-0.15,.4)
 plt.xlabel(r'$\ell_x$')
 plt.ylim([0.05, 0.25])
 plt.xlim([0, 40])
 plt.yticks([.1, .2,])
 plt.legend()
-plt.tight_layout()
-fig.text(0.1, .87, r'(b)', fontsize=20)
-plt.savefig('figures/fig6.pdf', bbox_inches='tight')
+plt.savefig('fig10.pdf', bbox_inches='tight')
 plt.show()
