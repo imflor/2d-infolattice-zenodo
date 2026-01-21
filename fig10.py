@@ -10,7 +10,7 @@ of the accompanying paper.
 Top-level structure
 -------------------
 data : dict[str, dict]
-    Mapping from a descriptive dataset label ("trivial" or "topological")
+    Mapping from a descriptive dataset label ("system_30", "system_40", ...)
     to a dictionary with the following keys:
 
 Keys for each dataset label
@@ -35,14 +35,8 @@ i_local : np.ndarray
 
 Example usage
 -------------
-Information per multiscale (used in panels a,b):
-    data["trivial"]["i_local"].sum(axis=(2, 3)).T
-
-Quasi-1D information per scale (used in panels c,d):
-    data["topological"]["i_local"].sum(axis=(1, 2, 3))
-
-Bulk-vs-edge quasi-1D decomposition at distance ζ from the boundary:
-    quasi1d_information_bulk_vs_edge(data["topological"]["i_local"], ζ=13)
+Edge-averaged quasi-1D information for a given size (used in Fig. 10):
+    average_information_per_scale_along_edge(data)[1][:, 0]
 
 """
 
@@ -51,43 +45,61 @@ Bulk-vs-edge quasi-1D decomposition at distance ζ from the boundary:
 import numpy as np
 import matplotlib.pyplot as plt
 
+
 ## Input data
 
 data = np.load("fig10.npy", allow_pickle=True).item(0)
 sizes = data["sizes"]  # vertical system sizes
 
+
 ## Helpers
 
-def average_information_per_scale_along_edge():
-    """Returns the average quasi-1D local information along the edge in the y direction (left edge).
-    Done along the middle portion of the edge of length `size // 2`, at a distance `dist` from the edge.
+def average_information_per_scale_along_edge(data, sizes):
+    """Return edge-averaged quasi-1D local information as a function of scale.
+
+    Average is taken along the left edge in the y direction, over the middle portion
+    of length size//2 (i.e., excluding a margin dist=size//4 at top and bottom).
+
+    Returns
+    -------
+    scale : np.ndarray
+        Scale value.
+    i_scales : np.ndarray
+        Array of shape (max(sizes), len(sizes)) storing edge-averaged information.
     """
-    scale = np.arange(np.max(sizes))
-    i_scales = np.zeros([np.max(sizes), len(sizes)])
-    for i, size in enumerate(sizes):
+    max_size = int(np.max(sizes))
+    scale = np.arange(max_size)
+    i_scales = np.zeros((max_size, len(sizes)))
+    for j, size in enumerate(sizes):
         dist = size // 4
         for ly in range(size - 2 * dist):
             for lx in range(3):
-                i_scales[ly, i] += np.mean(
-                    data["system_%d" % size]["i_local"][lx, ly, :3 - lx, dist:size - ly - dist].sum(axis=0))
+                vals = data[f"system_{size}"]["i_local"][lx, ly, : 3 - lx, dist : size - ly - dist].sum(axis=0)
+                i_scales[ly, j] += np.mean(vals)
     return scale, i_scales
+
 
 ## Figure
 
-scale, i_scales = average_information_per_scale_along_edge()
+scale, i_scales = average_information_per_scale_along_edge(data, sizes)
 
-fig = plt.figure(figsize=(3, 2), constrained_layout=True)
-ax = fig.add_subplot(111)
-for i, size in enumerate(sizes):
+fig, ax = plt.subplots(figsize=(3, 2), constrained_layout=True)
+
+for j, size in enumerate(sizes):
     dist = size // 4
-    plt.plot(scale[:size-2*dist], (i_scales[:, i] * scale**2)[:size-2*dist], lw=1.5)
-plt.axhline(1 / (12 * np.log(2)), c='k', label=r'$1/12\ln 2$', dashes=(5, 2), lw=1.5)
-plt.ylabel(r'$i^{\ell_x}|_{\mathcal{C}_\mathrm{edge}}\cdot\ell_x^{2}$')
-ax.yaxis.set_label_coords(-0.15,.4)
-plt.xlabel(r'$\ell_x$')
-plt.ylim([0.05, 0.25])
-plt.xlim([0, 40])
-plt.yticks([.1, .2,])
-plt.legend()
-plt.savefig('fig10.pdf', bbox_inches='tight')
+    stop = size - 2 * dist
+    ax.plot(scale[:stop], (i_scales[:, j] * scale**2)[:stop], lw=1.5)
+
+ax.axhline(1 / (12 * np.log(2)), c="k", label=r"$1/12\ln 2$", dashes=(5, 2), lw=1.5)
+
+ax.set_xlabel(r"$\ell_x$")
+ax.set_ylabel(r"$i^{\ell_x}|_{\mathcal{C}_\mathrm{edge}}\cdot\ell_x^{2}$")
+ax.yaxis.set_label_coords(-0.15, 0.4)
+
+ax.set_xlim([0, 40])
+ax.set_ylim([0.05, 0.25])
+ax.set_yticks([0.1, 0.2])
+ax.legend()
+
+plt.savefig("fig10.pdf", bbox_inches="tight")
 plt.show()
