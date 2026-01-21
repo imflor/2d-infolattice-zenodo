@@ -42,9 +42,6 @@ Information per multiscale (used in panels a,b):
 Quasi-1D information per scale (used in panels c,d):
     data["topological"]["i_local"].sum(axis=(1, 2, 3))
 
-Bulk-vs-edge quasi-1D decomposition at distance ζ from the boundary:
-    quasi1d_information_bulk_vs_edge(data["topological"]["i_local"], ζ=13)
-
 """
 
 ## Imports
@@ -56,7 +53,7 @@ import scipy.optimize
 
 ## Input data
 
-data = np.load("fig9.npy", allow_pickle=True).item(0)
+data = np.load("fig10.npy", allow_pickle=True).item(0)
 Nx, Ny = data["trivial"]["size"]
 ζ_list = [1, 4, 8, 10, 12, 13]  # Distances from the edge at which to compute bulk and edge contributions
 
