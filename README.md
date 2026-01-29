@@ -2,9 +2,8 @@
 
 This repository contains:
 
-* `figures/`: scripts (`.py`) and datasets (`.npy`) to reproduce the paper figures (saved as `.pdf` by the scripts).
+* `paper_figures/`: scripts (`.py`) and datasets (`.npy`) to reproduce the paper figures (saved as `.pdf` by the scripts).
 * `demo/`: a minimal demo generating the information lattice for a given many-body state (separate from figure reproduction).
-* `utils/plotting.py`: shared plotting utilities used by both.
 
 ## Setup
 
