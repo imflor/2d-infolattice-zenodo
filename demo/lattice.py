@@ -27,7 +27,7 @@ class InformationLattice:
         Lattice of all subsystems: subsystem sites for (lx, ly, nx, ny) are stored in
         subsystems_lattice[lx, ly, nx, ny, :((lx+1)*(ly+1))].
     i_vn : np.ndarray, shape (Nx+2, Ny+2, Nx+1, Ny+1)
-        Von Neumann information I_vN(C) for each subsystem; padded for inclusion–exclusion.
+        Von Neumann information I_vN(C) for each subsystem; extra columns/rows added for well-defined indexing.
     i_local : np.ndarray, shape (Nx, Ny, Nx, Ny)
         Local information from inclusion–exclusion, indexed as i_local[lx, ly, nx, ny].
 
