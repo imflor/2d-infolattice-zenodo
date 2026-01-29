@@ -22,7 +22,7 @@ information_lattice.compute(state)
 # Plot the information lattice
 fig, ax_map = plot.plot_infolattice(
     i_local=information_lattice.i_local,
-    colors=['w', 'r', 'k']
+    colors=['w', 'r', 'k']  # add colors if necessary
 )
 plt.savefig("random_singlets.pdf", bbox_inches="tight")
 plt.show()

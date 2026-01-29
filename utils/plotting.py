@@ -6,13 +6,13 @@ from matplotlib.colors import ListedColormap, BoundaryNorm
 
 def discrete_cmap_norm(values, colors):
     v = np.unique(np.round(values, decimals=5))
-    if len(colors) != v.size:
-        raise ValueError(f"Need {v.size} colors for values {v}, got {len(colors)}.")
+    if len(colors) < v.size:
+        raise ValueError(f"Need {v.size} colors for values {v}, got only {len(colors)}.")
     if v.size == 1:
         b = np.array([v[0] - 0.5, v[0] + 0.5])
     else:
         b = np.r_[v[0] - (v[1] - v[0]) / 2, (v[:-1] + v[1:]) / 2, v[-1] + (v[-1] - v[-2]) / 2]
-    cmap = ListedColormap(colors)
+    cmap = ListedColormap(colors[:len(v)])
     return v, b, cmap, BoundaryNorm(b, cmap.N)
 
 
