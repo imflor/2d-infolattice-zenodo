@@ -50,5 +50,5 @@ python figures/fig07.py
 Run the demo script from the repository root, for example:
 
 ```bash
-python demo/main.py
+python demo/lattice.py
 ```
