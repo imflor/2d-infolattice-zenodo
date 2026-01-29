@@ -13,7 +13,7 @@ Requires Python >= 3.9.
 All scripts assume the working directory is the repository root. Example:
 
 ```bash
-python figures/fig07.py
+python paper_figures/fig07.py
 ```
 
 ### Install dependencies (recommended)
@@ -42,7 +42,7 @@ python -m pip install -e .
 Run any figure script from the repository root, for example:
 
 ```bash
-python figures/fig07.py
+python paper_figures/fig07.py
 ```
 
 ### Run the minimal demo
